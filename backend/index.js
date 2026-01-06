@@ -5,20 +5,21 @@ const morgan = require("morgan");
 const dotenv = require("dotenv") 
 const connectDB = require("./config/db")
 
+ 
 
-const app = express()
+const app = express();
 
-
-
-app.use(express.json())
-app.use(morgan("dev")); 
-app.use(cors())
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(cors());
 
 dotenv.config();
 
+connectDB();
 
-connectDB()
-
+require("./utils/appointmentReminder");
+require("./utils/sendEmail");
+ 
 
 app.use("/api/v2/user" , require("./routes/userRoutes"))
 app.use("/api/v2/doctor", require("./routes/doctorRoutes"));

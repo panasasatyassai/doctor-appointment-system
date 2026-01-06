@@ -1,21 +1,54 @@
-//import { useNavigate } from "react-router-dom";
-import {Link} from 'react-router-dom'
+import { Link, useLocation } from "react-router-dom";
+
 const Navbar = () => {
-   
+  const location = useLocation();
+
+  const isActive = (path) =>
+    location.pathname === path
+      ? "text-blue-600 font-semibold"
+      : "text-slate-600 hover:text-blue-600";
 
   return (
-    <div className="bg-amber-50 p-4 flex justify-between text-white">
-      <h1 className="font-bold text-black">Doctor Appointment System</h1>
+    <header className="bg-amber-50/90 backdrop-blur border-b border-slate-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src="https://doccure-wp.dreamstechnologies.com/wp-content/uploads/2024/06/logo-01.svg"
+            alt="Doccure"
+            className="h-9"
+          />
+        </Link>
 
-      <div className="p-3 flex gap-3">
-        <h3 className="text-black"><Link to="/">Home</Link></h3>
-        <button className='bg-blue-500 w-[70px] h-[28px] border-0 rounded '> 
-          <Link to="/login">Login</Link>
-           </button>
-        <button className="bg-blue-500 w-[70px] h-[28px] border-0 rounded "> <Link to="/register">Register</Link> </button>
+        <nav className="flex items-center gap-6">
+          <Link to="/" className={`text-sm ${isActive("/")}`}>
+            Home
+          </Link>
+
+          <Link
+            to="/login"
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all shadow-sm ${
+              location.pathname === "/login"
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/register"
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all shadow-sm ${
+              location.pathname === "/register"
+                ? "bg-blue-600 text-white"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            }`}
+          >
+            Register
+          </Link>
+        </nav>
       </div>
-    </div>
+    </header>
   );
 };
 
-export default Navbar
+export default Navbar;

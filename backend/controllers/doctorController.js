@@ -87,11 +87,34 @@ const addDoctorByAdminController = async (req, res) => {
     });
   }
 };
+//.find({ status: "approved" })
+
+const getAllDoctorsController2 = async (req, res) => {
+  try {
+    const doctors = await doctorModel
+      .find({ status: "approved" })
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).send({
+      success: true,
+      data: doctors,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Failed to fetch doctors",
+    });
+  }
+};
+
+
 
 const getAllDoctorsController = async (req, res) => {
   try {
     const doctors = await doctorModel
-      .find({ status: "approved" })
+      .find({ status: { $in: ["approved", "rejected"] } })
       .populate("userId", "name email")
       .sort({ createdAt: -1 });
 
@@ -185,4 +208,5 @@ module.exports = {
   registerDoctorController,
   addDoctorByAdminController,
   getAllDoctorsController,
+  getAllDoctorsController2
 };

@@ -10,115 +10,129 @@ const Login = () => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
 
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const onChangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const onChangeRole = (e) => {
-    setRole(e.target.value);
-  };
-
   const onSubmitDetails = async (e) => {
     e.preventDefault();
-    const newUser = {
-      email,
-      password,
-      role,
-    };
-    // console.log(newUser)
+    const newUser = { email, password, role };
+
     try {
       const res = await axios.post(
         "http://localhost:5000/api/v2/user/login",
-        newUser)
-        console.log(res.data) 
+        newUser
+      );
 
-    
+      const userProfile = res.data.user;
+      localStorage.setItem("user", JSON.stringify(userProfile));
+
       if (res.data.success) {
-      const backendToken =   res.data.token
-      const role = res.data.user.role 
-      localStorage.setItem("token", backendToken)
-      localStorage.setItem("role", role)
-      message.success("Login SuccessFully");
-      if (res.data.success) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.user.role);
+
+        message.success("Login Successfully");
+
         if (res.data.user.role === "admin") {
-          navigate("/admin-dashboard", {replace : true});
-           
+          navigate("/admin-dashboard", { replace: true });
         } else if (res.data.user.role === "doctor") {
-          navigate("/doctor-dashboard", {replace : true});
+          navigate("/doctor-dashboard", { replace: true });
         } else {
-          navigate("/log-home" , {replace : true});
+          navigate("/log-home", { replace: true });
         }
       } else {
         message.error(res.data.message);
       }
-    }
     } catch (e) {
-      console.log(`Error at : ${e}`);
+      message.error(e.response?.data?.message || "Login failed");
     }
   };
+
   return (
-    <div className="bg-white-500">
+    <>
       <Navbar />
-      <div className="bg-white-500 h-[510px] flex flex-cols justify-center items-center text-center">
-        <div>
-          <h1 className="font-bold text-[30px]">Log In</h1>
-          <form onSubmit={onSubmitDetails}>
-            <input
-              type="mail"
-              value={email}
-              onChange={onChangeEmail}
-              required
-              placeholder="Enter your email"
-              className="bg-amber-100 m-3 w-[300px] h-[45px] pl-3"
-            />{" "}
-            <br />
-            <input
-              type="password"
-              value={password}
-              onChange={onChangePassword}
-              className="bg-amber-100 m-3 w-[300px] h-[45px] pl-3"
-              required
-              placeholder="Enter your password"
-            />{" "}
-            <br />
-            <select
-              value={role}
-              onChange={onChangeRole}
-              className=" w-[300px] h-[45px] m-3 border border-gray-300 rounded px-3 py-2 text-gray-700"
-              required
-            >
-              <option value="" disabled>
-                Select Role
-              </option>
-              <option value="admin">Admin</option>
-              <option value="doctor">Doctor</option>
-              <option value="patient">Patient</option>
-            </select>
-            <div className="">
-              <button
-                type="submit"
-                className="w-[300px] h-[45px] bg-blue-500 m-3 rounded text-white w-[90px] h-[40px]"
-              >
-                Sign In
-              </button>
-            </div>
-          </form>
-          <p>
-            Not a User ?{" "}
-            <span>
-              {" "}
-              <Link to="/register" className="text-blue-500 font-bold">
-                Register
-              </Link>{" "}
-            </span>{" "}
+
+      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
+        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white px-10">
+          <h1 className="text-4xl font-bold mb-4">Doctor Appointment System</h1>
+          <p className="text-lg text-blue-100 text-center max-w-md">
+            Securely manage appointments, doctors, and patients from one
+            powerful dashboard.
           </p>
         </div>
+
+        <div className="flex items-center justify-center bg-slate-50 px-6">
+          <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
+            <h2 className="text-2xl font-bold text-slate-800 mb-1">Sign In</h2>
+            <p className="text-sm text-slate-500 mb-6">
+              Enter your credentials to continue
+            </p>
+
+            <form onSubmit={onSubmitDetails} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="email@example.com"
+                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">
+                  Role
+                </label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  required
+                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="" disabled>
+                    Select role
+                  </option>
+                  <option value="admin">Admin</option>
+                  <option value="doctor">Doctor</option>
+                  <option value="patient">Patient</option>
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-11 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
+              >
+                Login
+              </button>
+            </form>
+
+            <p className="text-center text-sm text-slate-600 mt-6">
+              Don’t have an account?{" "}
+              <Link
+                to="/register"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Register
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

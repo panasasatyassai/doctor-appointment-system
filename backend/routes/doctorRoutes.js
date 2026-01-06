@@ -1,13 +1,27 @@
 const express = require("express") 
 const authMiddleware = require("../Middleware/authMiddleware")
-const { getAllDoctorsController , registerDoctorController, addDoctorByAdminController, getDoctorProfileController, updateAvailabilityController } = require("../controllers/doctorController")
-const { getDoctorSlotsController, createSlotsController } = require("../controllers/slotController")
-const { updateAppointmentStatusController, getDoctorAppointmentsController } = require("../controllers/appointmentController")
-const doctorMiddleware = require("../Middleware/doctorMiddleware")
+const {
+  getAllDoctorsController,
+  registerDoctorController,
+  addDoctorByAdminController,
+  getDoctorProfileController,
+  updateAvailabilityController,
+  getAllDoctorsController2,
+} = require("../controllers/doctorController");
+const {
+  getDoctorSlotsController,
+  createSlotsController,
+} = require("../controllers/slotController");
+const {
+  updateAppointmentStatusController,
+  getDoctorAppointmentsController,
+} = require("../controllers/appointmentController");
+const doctorMiddleware = require("../Middleware/doctorMiddleware");
 
-const router = express.Router() 
+const router = express.Router();
 
-router.get("/get-all-doctors", authMiddleware , getAllDoctorsController) 
+router.get("/get-all-doctors", authMiddleware, getAllDoctorsController);
+router.get("/get-all-doctors2", authMiddleware, getAllDoctorsController2); 
 
 router.post("/apply-doctor", authMiddleware , addDoctorByAdminController) 
 

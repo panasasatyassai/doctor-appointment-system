@@ -9,17 +9,12 @@ const isDoctorAvailableNow = (availability) => {
   if (!availability) return false;
 
   const { days, from, to } = availability;
-
   const now = new Date();
 
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const today = dayNames[now.getDay()];
 
-  console.log("TODAY:", today);
-  console.log("AVAILABLE DAYS:", days);
-
   if (!days.includes(today)) {
-    
     return false;
   }
 
@@ -31,10 +26,6 @@ const isDoctorAvailableNow = (availability) => {
 
   const toTime = new Date();
   toTime.setHours(toH, toM, 0, 0);
-
-  // console.log("NOW:", now);
-  // console.log("FROM:", fromTime);
-  // console.log("TO:", toTime);
 
   if (toTime < fromTime) {
     return now >= fromTime || now <= toTime;
@@ -56,47 +47,65 @@ const getNextAvailableDay = (days) => {
 
 const DoctorCard = ({ doctor, onSelect }) => {
   const available = isDoctorAvailable(doctor.availability);
-
   const isAvailable = isDoctorAvailableNow(doctor.availability);
   const nextDay = getNextAvailableDay(doctor.availability?.days || []);
 
   return (
-    <div className="bg-white shadow p-5 rounded hover:shadow-lg">
-      <h3 className="font-bold text-lg">{doctor.name}</h3>
-      <p className="text-gray-600">{doctor.specialization}</p>
-      <p className="text-sm text-gray-500">Experience: {doctor.experience}</p>
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-lg transition-all duration-300">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-lg">
+          {doctor.name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <h3 className="font-semibold text-lg text-slate-800">
+            {doctor.name}
+          </h3>
+          <p className="text-sm text-slate-500">{doctor.specialization}</p>
+        </div>
+      </div>
 
-      <div className="mt-3 text-sm">
+      <div className="space-y-1 text-sm text-slate-600">
+        <p>
+          <span className="font-medium">Experience:</span> {doctor.experience}{" "}
+          years
+        </p>
+
         {available ? (
-          <div className="mt-2 text-sm text-green-700">
-            <p>Available: {doctor.availability.days.join(" , ")}</p>
+          <div className="mt-2 text-green-700">
             <p>
-              Time: {doctor.availability.from} – {doctor.availability.to}
+              <span className="font-medium">Available:</span>{" "}
+              {doctor.availability.days.join(", ")}
+            </p>
+            <p>
+              <span className="font-medium">Time:</span>{" "}
+              {doctor.availability.from} – {doctor.availability.to}
             </p>
           </div>
         ) : (
-          <p className="mt-2 text-sm text-red-600">Not Available</p>
+          <p className="text-red-600 font-medium mt-2">Not Available</p>
         )}
       </div>
 
-      {/* Action Button */}
+      <div className="mt-5">
+        <button
+          onClick={() => onSelect(doctor)}
+          disabled={!isAvailable}
+          className={`w-full py-2.5 rounded-lg text-sm font-medium transition ${
+            isAvailable
+              ? "bg-blue-600 text-white hover:bg-blue-700"
+              : "bg-slate-300 text-slate-600 cursor-not-allowed"
+          }`}
+        >
+          Book Appointment
+        </button>
 
-      <button
-        onClick={() => onSelect(doctor)}
-        disabled={!isAvailable}
-        className={`px-4 py-2 rounded ${
-          isAvailable ? "bg-blue-500 text-white" : "bg-gray-400 cursor-not-allowed"
-        }`}
-      >
-        Book Appointment
-      </button>
-
-      {!isAvailable && (
-        <p className="text-sm text-red-500 mt-2">
-          Next available: {nextDay} ({doctor.availability.from} –{" "}
-          {doctor.availability.to})
-        </p>
-      )}
+        {!isAvailable && nextDay && (
+          <p className="text-xs text-red-500 mt-2 text-center">
+            Next available: {nextDay} ({doctor.availability.from} –{" "}
+            {doctor.availability.to})
+          </p>
+        )}
+      </div>
     </div>
   );
 };

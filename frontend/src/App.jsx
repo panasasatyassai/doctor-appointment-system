@@ -11,7 +11,7 @@ import PublicRoute from "./components/publicRoute/publicRoute";
 import NotFound from "./components/NotFound/NotFound";
 import RoleProtectedRoute from "./components/RoleProtectedRoute/RoleProtectedRoute"; 
 import Notifications from "./components/Notifications/Notifications";
- 
+
 
 const App = () => {
   return (

@@ -26,8 +26,13 @@ const appointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
-      default: "pending", // pending | approved | rejected
+      enum: ["pending", "approved", "cancelled"],
+      default: "approved",
+    },
+    cancelReason: String,
+    reminderSent: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

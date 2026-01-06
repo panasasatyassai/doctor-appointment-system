@@ -58,26 +58,44 @@ const loginController = async (req, res) => {
       expiresIn: "1d",
     });
      
-    if(user.role === "admin") {
-        return res.status(200).send({success : true , token , message : "Admin login successfully" , user : {
-            id : user._id , 
-            email : user.email ,  
-            role : user.role 
-        }})
-    }   
+    if (user.role === "admin") {
+      return res.status(200).send({
+        success: true,
+        token,
+        message: "Admin login successfully",
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
+        },
+      });
+    }
 
-    if(user.role === "doctor") {
-        return res.status(200).send({success : true ,token  , message : "Doctor login successfully" , user : {
-            id : user._id , 
-            email : user.email ,  
-            role : user.role 
-        }})
-    }  
-    
-    res.status(200).send({ message: "Login Success", success: true, token , user : {
-        id : user._id , 
-        email : user.email , role : user.role 
-    }  });
+    if (user.role === "doctor") {
+      return res.status(200).send({
+        success: true,
+        token,
+        message: "Doctor login successfully",
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    }
+
+    res.status(200).send({
+      message: "Login Success",
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+      },
+    });
   } catch (error) {
     console.log(error);
     res

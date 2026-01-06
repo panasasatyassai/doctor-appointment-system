@@ -7,6 +7,7 @@ import { message } from "antd";
 import Modal from "react-modal";
 import { IoMdAddCircle } from "react-icons/io";
 import { ThreeDots } from "react-loader-spinner";
+import { FiInfo } from "react-icons/fi";
 
 const customStyles = {
   content: {
@@ -20,6 +21,8 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
   },
 };
+
+let allTotalDoctors = [];
 
 const AdminDashboard = () => {
   const [modelIsOpen, setIsOpen] = useState(false);
@@ -95,7 +98,7 @@ const AdminDashboard = () => {
         specialization: eachDoctor.specialization,
         status: eachDoctor.status,
       }));
-
+      allTotalDoctors = updatedAllDoctorsList;
       setDoctors(updatedAllDoctorsList);
     } catch (e) {
       console.log(e);
@@ -126,7 +129,8 @@ const AdminDashboard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("Doc : ", error.response.data.message);
+        console.log(res.data);
+        // console.log("Doc : ", error.response.data.message);
         fetchDoctors();
         if (res.data.success === true) {
           message.success(res.data.message);
@@ -139,6 +143,7 @@ const AdminDashboard = () => {
         setExperience("");
       } catch (e) {
         message.error(e.response.data.message);
+        console.log(e.response);
         setDoctorName("");
       }
     }
@@ -186,82 +191,209 @@ const AdminDashboard = () => {
   }, []);
 
   const RenderAddedDoctors = () => {
+    const [searchName, setSearchName] = useState("");
+    const [filterSpecialization, setFilterSpecialization] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
+
+    const filteredDoctors = allTotalDoctors.filter((doc) => {
+      const matchName =
+        searchName === "" ||
+        doc.name.toLowerCase().includes(searchName.toLowerCase());
+
+      const matchSpecialization =
+        filterSpecialization === "" ||
+        doc.specialization === filterSpecialization;
+
+      const matchStatus = filterStatus === "" || doc.status === filterStatus;
+
+      return matchName && matchSpecialization && matchStatus;
+    });
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-10">
-        <div className="px-6 py-4 border-b">
-          <h3 className="text-xl font-semibold text-slate-800">
-            Manage Doctors
-          </h3>
-        </div>
-
-        <table className="w-full">
-          <thead className="bg-slate-100 text-slate-600 text-sm">
-            <tr>
-              <th className="w-2"></th>
-              <th className="p-4 text-left">Name</th>
-              <th className="text-left">Specialization</th>
-              <th className="text-center">Status</th>
-              <th className="text-center">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {doctors.map((doc) => (
-              <tr
-                key={doc.id}
-                className="border-b hover:bg-slate-50 transition"
+      <>
+        <div className="flex flex-wrap justify-between items-end gap-4 mb-6">
+          <div className="flex gap-4 flex-wrap">
+            <div>
+              <label className="text-sm font-medium text-slate-600">
+                Specialization
+              </label>
+              <select
+                value={filterSpecialization}
+                onChange={(e) => setFilterSpecialization(e.target.value)}
+                className="block h-10 px-3 mt-1 rounded-md border border-slate-300"
               >
-                <td
-                  className={`w-2 ${
-                    doc.status === "approved" ? "bg-green-500" : "bg-red-500"
-                  }`}
-                ></td>
+                <option value="">All</option>
+                <option value="Orthopedic">Orthopedic</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="ENT">ENT</option>
+              </select>
+            </div>
 
-                <td className="p-4 font-medium text-slate-800">{doc.name}</td>
+            <div>
+              <label className="text-sm font-medium text-slate-600">
+                Status
+              </label>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="block h-10 px-3 mt-1 rounded-md border border-slate-300"
+              >
+                <option value="">All</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </div>
 
-                <td className="text-slate-600">{doc.specialization}</td>
+          <input
+            type="search"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="Search doctor..."
+            className="h-10 px-4 rounded-full border border-slate-300 w-[240px]"
+          />
+        </div>
+        <div>
+          {filteredDoctors.length === 0 ? (
+            <div className="bg-white border border-slate-200 rounded-xl px-6 py-4 mb-6 shadow-sm">
+              {!filterSpecialization && !filterStatus && !searchName && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <FiInfo className="text-blue-600 text-xl" />
+                    </div>
 
-                <td className="text-center">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-semibold
-              ${
-                doc.status === "approved"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-                  >
-                    {doc.status}
-                  </span>
-                </td>
-
-                <td className="text-center">
-                  <div className="flex justify-center gap-3">
-                    <button
-                      onClick={() => updateDoctorStatus(doc.id, "approved")}
-                      className="text-green-600 hover:text-green-800 font-semibold"
-                    >
-                      Approve
-                    </button>
-
-                    <button
-                      onClick={() => updateDoctorStatus(doc.id, "rejected")}
-                      className="text-red-600 hover:text-red-800 font-semibold"
-                    >
-                      Reject
-                    </button>
+                    <div>
+                      <p className="text-slate-800 font-medium">
+                        No filters applied
+                      </p>
+                      <p className="text-slate-500 text-sm">
+                        Showing all doctors. Use filters to narrow down results.
+                      </p>
+                    </div>
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
+                  <span className="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+                    All Records
+                  </span>
+                </div>
+              )}
+
+              {(filterSpecialization || filterStatus || searchName) && (
+                <div>
+                  <p className="text-sm font-medium text-slate-600 mb-2">
+                    Filters applied:
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {filterSpecialization && (
+                      <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                        Specialization: {filterSpecialization}
+                      </span>
+                    )}
+
+                    {filterStatus && (
+                      <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                        Status: {filterStatus}
+                      </span>
+                    )}
+
+                    {searchName && (
+                      <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
+                        Search: {searchName}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl shadow-md overflow-hidden mb-10">
+              <div className="px-6 py-4 border-b">
+                <h3 className="text-xl font-semibold text-slate-800">
+                  Manage Doctors
+                </h3>
+              </div>
+
+              <table className="w-full">
+                <thead className="bg-slate-100 text-slate-600 text-sm">
+                  <tr>
+                    <th className="w-2"></th>
+                    <th className="p-4 text-left">Name</th>
+                    <th className="text-left">Specialization</th>
+                    <th className="text-center">Status</th>
+                    <th className="text-center">Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredDoctors.map((doc) => (
+                    <tr
+                      key={doc.id}
+                      className="border-b hover:bg-slate-50 transition"
+                    >
+                      <td
+                        className={`w-2 ${
+                          doc.status === "approved"
+                            ? "bg-green-500"
+                            : "bg-red-500"
+                        }`}
+                      ></td>
+
+                      <td className="p-4 font-medium text-slate-800">
+                        {doc.name}
+                      </td>
+
+                      <td className="text-slate-600">{doc.specialization}</td>
+
+                      <td className="text-center">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-semibold
+                  ${
+                    doc.status === "approved"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                        >
+                          {doc.status}
+                        </span>
+                      </td>
+
+                      <td className="text-center">
+                        <div className="flex justify-center gap-3">
+                          <button
+                            onClick={() =>
+                              updateDoctorStatus(doc.id, "approved")
+                            }
+                            className="text-green-600 hover:text-green-800 font-semibold"
+                          >
+                            Approve
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              updateDoctorStatus(doc.id, "rejected")
+                            }
+                            className="text-red-600 hover:text-red-800 font-semibold"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </>
     );
   };
 
   const RenderAllAppointments = () => {
     return (
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden mt-3">
         <div className="px-6 py-4 border-b">
           <h3 className="text-xl font-semibold text-slate-800">
             All Appointments

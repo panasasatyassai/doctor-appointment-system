@@ -37,11 +37,10 @@ const addDoctorByAdminController = async (req, res) => {
       });
     }
 
-    // 🔹 generate email
     const email = name.toLowerCase().replace(/\s+/g, "") + "@hospital.com";
+    console.log(email);
 
-    // 🔹 prevent duplicate doctor
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await userModel.findOne({ name });
     if (existingUser) {
       return res.status(400).send({
         success: false,
@@ -49,11 +48,9 @@ const addDoctorByAdminController = async (req, res) => {
       });
     }
 
-    // 🔹 auto password
     const plainPassword = "doctor@123";
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
-    // 🔹 create user
     const user = await userModel.create({
       name,
       email,
@@ -61,7 +58,6 @@ const addDoctorByAdminController = async (req, res) => {
       role: "doctor",
     });
 
-    // 🔹 create doctor profile
     const doctor = await doctorModel.create({
       userId: user._id,
       name,
@@ -76,7 +72,7 @@ const addDoctorByAdminController = async (req, res) => {
       data: doctor,
       credentials: {
         email,
-        password: plainPassword, // optional: show once
+        password: plainPassword,
       },
     });
   } catch (error) {
@@ -87,7 +83,6 @@ const addDoctorByAdminController = async (req, res) => {
     });
   }
 };
-//.find({ status: "approved" })
 
 const getAllDoctorsController2 = async (req, res) => {
   try {
@@ -108,8 +103,6 @@ const getAllDoctorsController2 = async (req, res) => {
     });
   }
 };
-
-
 
 const getAllDoctorsController = async (req, res) => {
   try {
@@ -156,7 +149,6 @@ const updateAvailabilityController = async (req, res) => {
   try {
     const { days, from, to } = req.body;
     console.log("REQ BODY DAYS:", req.body.days);
-
 
     if (!days || !from || !to) {
       return res.status(400).send({
@@ -208,5 +200,5 @@ module.exports = {
   registerDoctorController,
   addDoctorByAdminController,
   getAllDoctorsController,
-  getAllDoctorsController2
+  getAllDoctorsController2,
 };

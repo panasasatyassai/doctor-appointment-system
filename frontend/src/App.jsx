@@ -7,7 +7,7 @@ import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
 import DoctorDashboard from "./components/DoctorDashboard/DoctorDashboard";
 import DoctorsPage from "./components/Doctors/DoctorsPage";
 import LogHomePage from "./components/LogHomePage/LogHomePage"; 
-import PublicRoute from "./components/publicRoute/publicRoute";
+import PublicRoute from "./components/publicRoute/PublicRoute";
 import NotFound from "./components/NotFound/NotFound";
 import RoleProtectedRoute from "./components/RoleProtectedRoute/RoleProtectedRoute"; 
 import Notifications from "./components/Notifications/Notifications";

@@ -1,5 +1,5 @@
-const express = require("express") 
-const authMiddleware = require("../Middleware/authMiddleware")
+const express = require("express");
+const authMiddleware = require("../Middleware/authMiddleware");
 const {
   getAllDoctorsController,
   registerDoctorController,
@@ -7,6 +7,9 @@ const {
   getDoctorProfileController,
   updateAvailabilityController,
   getAllDoctorsController2,
+  getDoctorByIdController,
+  updateDoctorProfileController,
+  getRelatedDoctorsController,
 } = require("../controllers/doctorController");
 const {
   getDoctorSlotsController,
@@ -21,38 +24,37 @@ const doctorMiddleware = require("../Middleware/doctorMiddleware");
 const router = express.Router();
 
 router.get("/get-all-doctors", authMiddleware, getAllDoctorsController);
-router.get("/get-all-doctors2", authMiddleware, getAllDoctorsController2); 
+router.get("/get-all-doctors2", authMiddleware, getAllDoctorsController2);
 
-router.post("/apply-doctor", authMiddleware , addDoctorByAdminController) 
+router.post("/apply-doctor", authMiddleware, addDoctorByAdminController);
 
-router.post("/register", authMiddleware, registerDoctorController);  
+router.post("/register", authMiddleware, registerDoctorController);
 
 router.get(
   "/profile",
   authMiddleware,
   doctorMiddleware,
-  getDoctorProfileController
+  getDoctorProfileController,
 );
 
 router.get(
   "/appointments",
   authMiddleware,
   doctorMiddleware,
-  getDoctorAppointmentsController
+  getDoctorAppointmentsController,
 );
-
 
 router.post(
   "/update-availability",
   authMiddleware,
   doctorMiddleware,
-  updateAvailabilityController
+  updateAvailabilityController,
 );
 
+//router.get("/get-doctor/:id", authMiddleware, getDoctorByIdController);
+router.put("/update-doctor/:id", authMiddleware, updateDoctorProfileController);
 
- 
+router.get("/get-doctor/:id", getDoctorByIdController);
+router.get("/related-doctors", getRelatedDoctorsController);
 
-
-module.exports = router 
-
-
+module.exports = router;

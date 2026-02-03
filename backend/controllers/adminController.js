@@ -1,7 +1,6 @@
 const appointmentModel = require("../models/appointmentModel");
 const doctorModel = require("../models/doctorModel");
 const sendMail = require("../utils/sendEmail");
-//const sendEmail = require("../utils/sendEmail");
 
 const getAllAppointmentsController = async (req, res) => {
   try {
@@ -38,7 +37,7 @@ const updateDoctorStatusController = async (req, res) => {
     const doctor = await doctorModel.findByIdAndUpdate(
       doctorId,
       { status },
-      { new: true }
+      { new: true },
     );
 
     if (!doctor) {

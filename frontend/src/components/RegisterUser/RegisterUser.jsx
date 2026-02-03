@@ -24,7 +24,7 @@ const RegisterUser = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v2/user/register",
-        newUser
+        newUser,
       );
 
       if (response.data.success) {
@@ -47,29 +47,47 @@ const RegisterUser = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen flex">
-        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 text-white items-center justify-center p-12">
-          <div className="max-w-md">
-            <h1 className="text-4xl font-bold mb-4">
-              Doctor Appointment System
-            </h1>
-            <p className="text-lg text-blue-100 leading-relaxed">
-              Create your account and manage appointments, doctors, and patients
-              with ease using our secure platform.
-            </p>
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+        <div className="hidden lg:flex flex-col justify-center px-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white">
+          <h1 className="text-4xl font-bold leading-tight mb-6">
+            Join <span className="text-yellow-300">Doccure</span> Today
+          </h1>
+
+          <p className="text-lg text-blue-100 max-w-md mb-10">
+            Create your account and experience a modern doctor appointment
+            system built for patients, doctors, and administrators.
+          </p>
+
+          <div className="grid grid-cols-2 gap-6 text-sm max-w-md">
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-2xl font-bold">500+</p>
+              <p className="text-blue-200">Verified Doctors</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-2xl font-bold">10K+</p>
+              <p className="text-blue-200">Appointments</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-2xl font-bold">99%</p>
+              <p className="text-blue-200">Patient Trust</p>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-2xl font-bold">24/7</p>
+              <p className="text-blue-200">Availability</p>
+            </div>
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2 flex items-center justify-center bg-slate-50 px-6">
-          <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <div className="flex items-center justify-center bg-slate-50 px-6">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">
-              Create Account
+              Create your account
             </h2>
-            <p className="text-sm text-slate-500 mb-6">
-              Fill in your details to get started
+            <p className="text-sm text-slate-500 mb-8">
+              Fill in the details below to get started
             </p>
 
-            <form onSubmit={onSubmitDetails} className="space-y-4">
+            <form onSubmit={onSubmitDetails} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
                   Full Name
@@ -80,14 +98,13 @@ const RegisterUser = () => {
                   onChange={onChangeName}
                   required
                   placeholder="John Doe"
-                  className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              {/* EMAIL */}
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
-                  Email
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -95,11 +112,10 @@ const RegisterUser = () => {
                   onChange={onChangeEmail}
                   required
                   placeholder="email@example.com"
-                  className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              {/* PASSWORD */}
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
                   Password
@@ -110,20 +126,19 @@ const RegisterUser = () => {
                   onChange={onChangePassword}
                   required
                   placeholder="••••••••"
-                  className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              {/* ROLE */}
-              <div>
+              {/* <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
-                  Role
+                  Register As
                 </label>
                 <select
                   value={role}
                   onChange={onChangeRole}
                   required
-                  className="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="" disabled>
                     Select role
@@ -132,21 +147,39 @@ const RegisterUser = () => {
                   <option value="doctor">Doctor</option>
                   <option value="patient">Patient</option>
                 </select>
+              </div> */}
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-1">
+                  Register As
+                </label>
+
+                <select
+                  value="patient"
+                  disabled
+                  className="w-full mt-3 h-11 px-4 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 cursor-not-allowed"
+                >
+                  <option value="patient">Patient</option>
+                </select>
+
+                
+                <input type="hidden" name="role" value="patient" />
               </div>
 
-              {/* BUTTON */}
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition"
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md"
               >
                 Register
               </button>
             </form>
 
-            <p className="text-sm text-center text-slate-600 mt-6">
+            <p className="text-center text-sm text-slate-600 mt-8">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-600 font-semibold">
-                Login
+              <Link
+                to="/login"
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Sign in
               </Link>
             </p>
           </div>

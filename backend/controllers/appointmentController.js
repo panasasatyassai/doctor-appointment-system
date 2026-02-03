@@ -6,6 +6,8 @@ const bookAppointmentController = async (req, res) => {
   try {
     const { doctor, date, time, problem } = req.body;
 
+    console.log(doctor, date);
+
     const existingAppointment = await appointmentModel.findOne({
       doctorId: doctor.id,
       patientId: req.user._id,
@@ -27,70 +29,16 @@ const bookAppointmentController = async (req, res) => {
       date,
       time,
       problem,
-      status: "approved",
+      status: "pending",
     });
 
     await appointment.save();
 
     res.status(201).send({
       success: true,
-      message: "Appointment booked successfully",
+      message: "Appointment request sent. Waiting for doctor approval.",
     });
-
-    const convertToAmPm = (time24) => {
-      let [hours, minutes] = time24.split(":");
-      hours = Number(hours);
-
-      const period = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12 || 12;
-
-      return `${hours}:${minutes} ${period}`;
-    };
-
-    const bookedAppointment = {
-      doctorName: doctor.name,
-      patientName: req.user.name,
-      patientEmail: req.user.email,
-      date: date,
-      time: convertToAmPm(time),
-    };
-    console.log(bookedAppointment);
-
-    const transporter = nodeMailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL,
-        pass: process.env.PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
-
-    const sendRemainderMail = async () => {
-      const mailOptions = {
-        from: process.env.GMAIL,
-        to: bookedAppointment.patientEmail,
-        subject: `Node JS booked appointment message For you Booked Appointment with ${bookedAppointment.doctorName}`,
-        html: `
-        <h2> You Booked Appointment </h2>
-        <ul>
-         <li><b>Patient Name : </b> ${bookedAppointment.patientName} </li>
-         <li><b>Doctor Name : </b> ${bookedAppointment.doctorName} </li>
-          <li><b>Date : </b> ${bookedAppointment.date} </li>
-           <li><b>Time : </b> ${bookedAppointment.time} </li>
-        `,
-      };
-      try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`Email Sent : ${info.response}`);
-      } catch (e) {
-        console.log(`Email Error : ${e}`);
-      }
-    };
-    sendRemainderMail();
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       success: false,
       message: "Failed to book appointment",
@@ -104,14 +52,12 @@ const getPatientAppointmentsController = async (req, res) => {
       .find({ patientId: req.user._id })
       .populate("doctorId", "name specialization")
       .sort({ createdAt: -1 });
-    console.log(appointments);
 
     res.status(200).send({
       success: true,
       data: appointments,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       success: false,
       message: "Error fetching appointments",
@@ -121,12 +67,10 @@ const getPatientAppointmentsController = async (req, res) => {
 
 const getDoctorAppointmentsController = async (req, res) => {
   try {
-    // 1. find doctor using logged-in user
     const doctor = await doctorModel.findOne({
       userId: req.user._id,
     });
 
-    // 2. if doctor profile not found
     if (!doctor) {
       return res.status(404).send({
         success: false,
@@ -134,19 +78,16 @@ const getDoctorAppointmentsController = async (req, res) => {
       });
     }
 
-    // 3. fetch appointments for this doctor
     const appointments = await appointmentModel
       .find({ doctorId: doctor._id })
       .populate("patientId", "name email")
       .sort({ createdAt: -1 });
-    console.log("All : ", appointments);
-    // 4. send response
+
     res.status(200).send({
       success: true,
       data: appointments,
     });
   } catch (error) {
-    console.log("getDoctorAppointmentsController error:", error);
     res.status(500).send({
       success: false,
       message: "Failed to fetch doctor appointments",
@@ -157,13 +98,12 @@ const getDoctorAppointmentsController = async (req, res) => {
 const updateAppointmentController = async (req, res) => {
   try {
     const { date, time } = req.body;
-    console.log({ date, time });
     const appointmentId = req.params.id;
 
     const updated = await appointmentModel.findByIdAndUpdate(
       appointmentId,
       { date, time },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -172,8 +112,6 @@ const updateAppointmentController = async (req, res) => {
         message: "Appointment not found",
       });
     }
-
-    console.log(updated);
 
     res.status(200).send({
       success: true,
@@ -206,37 +144,12 @@ const deleteAppointmentController = async (req, res) => {
   }
 };
 
-const updateAppointmentStatusController = async (req, res) => {
-  try {
-    const { appointmentId, status } = req.body;
-
-    if (!["approved", "rejected"].includes(status)) {
-      return res.status(400).send({
-        success: false,
-        message: "Invalid status",
-      });
-    }
-
-    await appointmentModel.findByIdAndUpdate(appointmentId, {
-      status,
-    });
-
-    res.status(200).send({
-      success: true,
-      message: `Appointment ${status}`,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "Failed to update appointment",
-    });
-  }
-};
-
 const updateAppointmentStatusController1 = async (req, res) => {
   try {
     const { appointmentId, status } = req.body;
 
+    console.log(status);
+
     if (!["approved", "rejected"].includes(status)) {
       return res.status(400).send({
         success: false,
@@ -244,16 +157,113 @@ const updateAppointmentStatusController1 = async (req, res) => {
       });
     }
 
-    const appointment = await appointmentModel.findByIdAndUpdate(
-      appointmentId,
-      { status },
-      { new: true }
-    );
+    // const appointment = await appointmentModel
+    //   .findByIdAndUpdate(appointmentId, { status }, { new: true })
+    //   .populate("patientId", "name email")
+    //   .populate("doctorId", "name");
+
+    const appointment = await appointmentModel
+      .findByIdAndUpdate(appointmentId, { status }, { new: true })
+      .populate("patientId", "name email")
+      .populate({
+        path: "doctorId",
+        select: "name userId",
+        populate: {
+          path: "userId",
+          select: "email",
+        },
+      });
+
+    const doctorEmail = appointment.doctorId.userId.email;
+    console.log(appointment);
 
     if (!appointment) {
       return res.status(404).send({
         success: false,
         message: "Appointment not found",
+      });
+    }
+
+    const convertToAmPm = (time24) => {
+      let [hours, minutes] = time24.split(":");
+      hours = Number(hours);
+      const period = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      return `${hours}:${minutes} ${period}`;
+    };
+
+    const transporter = nodeMailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL,
+        pass: process.env.PASS,
+      },
+      tls: { rejectUnauthorized: false },
+    });
+
+    if (status === "approved") {
+      await transporter.sendMail({
+        from: process.env.GMAIL,
+        to: appointment.patientId.email,
+        subject: `Appointment Approved with ${appointment.doctorId.name}`,
+        html: `
+          <h2>Your Appointment is Confirmed</h2>
+          <ul>
+            <li><b>Patient Name:</b> ${appointment.patientId.name}</li>
+            <li><b>Doctor Name:</b> ${appointment.doctorId.name}</li>
+            <li><b>Date:</b> ${appointment.date}</li>
+            <li><b>Time:</b> ${convertToAmPm(appointment.time)}</li>
+          </ul>
+        `,
+      });
+
+      await transporter.sendMail({
+        from: process.env.GMAIL,
+        to: doctorEmail,
+        subject: `You Approved an appointment`,
+        html: `
+         <h2>Appointment approved</h2>
+         <ul>
+         <li><b>Patient : </b>${appointment.patientId.name} </li>
+         <li><b>Problem : </b>${appointment.problem} </li>
+         <li><b>Date : </b>${appointment.date} </li>
+         <li><b>Time : </b>${convertToAmPm(appointment.time)}</li>
+         </ul>
+        `,
+      });
+      //console.log("okk");
+    }
+
+    if (status === "rejected") {
+      await transporter.sendMail({
+        from: process.env.GMAIL,
+        to: appointment.patientId.email,
+        subject: `Appointment Rejected with ${appointment.doctorId.name}`,
+        html: `
+          <h2>Your Appointment has been Rejected</h2>
+          <ul>
+            <li><b>Patient Name:</b> ${appointment.patientId.name}</li>
+            <li><b>Doctor Name:</b> ${appointment.doctorId.name}</li>
+            <li><b>Date:</b> ${appointment.date}</li>
+            <li><b>Time:</b> ${convertToAmPm(appointment.time)}</li>
+          </ul>
+          <p>Please try booking another slot or doctor.</p>
+        `,
+      });
+
+      await transporter.sendMail({
+        from: process.env.GMAIL,
+        to: doctorEmail,
+        subject: "You rejected an appointment",
+        html: `
+        <h2>Appointment Rejected </h2> 
+        <ul>
+        <li><b>Patient : </b>${appointment.patientId.name} </li> 
+        <li><b>Problem : </b>${appointment.problem} </li>
+        <li><b>Date : </b>${appointment.date} </li> 
+        <li><b>Time:</b> ${convertToAmPm(appointment.time)}</li>
+          </ul>
+        `,
       });
     }
 
@@ -263,13 +273,106 @@ const updateAppointmentStatusController1 = async (req, res) => {
       data: appointment,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       success: false,
       message: "Failed to update appointment status",
     });
   }
 };
+
+// const updateAppointmentStatusController1 = async (req, res) => {
+//   try {
+//     const { appointmentId, status } = req.body;
+
+//     if (!["approved", "rejected"].includes(status)) {
+//       return res.status(400).send({
+//         success: false,
+//         message: "Invalid status",
+//       });
+//     }
+
+//     const appointment = await appointmentModel
+//       .findByIdAndUpdate(appointmentId, { status }, { new: true })
+//       .populate("patientId", "name email")
+//       .populate("doctorId", "name email"); // IMPORTANT
+
+//     if (!appointment) {
+//       return res.status(404).send({
+//         success: false,
+//         message: "Appointment not found",
+//       });
+//     }
+
+//     const convertToAmPm = (time24) => {
+//       let [hours, minutes] = time24.split(":");
+//       hours = Number(hours);
+//       const period = hours >= 12 ? "PM" : "AM";
+//       hours = hours % 12 || 12;
+//       return `${hours}:${minutes} ${period}`;
+//     };
+
+//     const transporter = nodeMailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.GMAIL,
+//         pass: process.env.PASS,
+//       },
+//       tls: {
+//         rejectUnauthorized: false, // 👈 THIS LINE FIXES IT
+//       },
+//     });
+
+//     // ------------------ PATIENT EMAIL ------------------
+//     const patientMail = {
+//       from: process.env.GMAIL,
+//       to: appointment.patientId.email,
+//       subject:
+//         status === "approved"
+//           ? `Appointment Approved with ${appointment.doctorId.name}`
+//           : `Appointment Rejected with ${appointment.doctorId.name}`,
+//       html: `
+//         <h2>Appointment ${status.toUpperCase()}</h2>
+//         <ul>
+//           <li><b>Patient:</b> ${appointment.patientId.name}</li>
+//           <li><b>Doctor:</b> ${appointment.doctorId.name}</li>
+//           <li><b>Date:</b> ${appointment.date}</li>
+//           <li><b>Time:</b> ${convertToAmPm(appointment.time)}</li>
+//         </ul>
+//       `,
+//     };
+
+//     // ------------------ DOCTOR EMAIL ------------------
+//     const doctorMail = {
+//       from: process.env.GMAIL,
+//       to: appointment.doctorId.email,
+//       subject: `You ${status} an appointment`,
+//       html: `
+//         <h2>Appointment ${status.toUpperCase()}</h2>
+//         <ul>
+//           <li><b>Patient:</b> ${appointment.patientId.name}</li>
+//           <li><b>Date:</b> ${appointment.date}</li>
+//           <li><b>Time:</b> ${convertToAmPm(appointment.time)}</li>
+//         </ul>
+//       `,
+//     };
+
+//     // Send both emails
+//     await transporter.sendMail(patientMail);
+//     await transporter.sendMail(doctorMail);
+
+//     res.status(200).send({
+//       success: true,
+//       message: `Appointment ${status}`,
+//       data: appointment,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
 
 const getBookedSlotsController = async (req, res) => {
   try {
@@ -292,10 +395,9 @@ const getBookedSlotsController = async (req, res) => {
 
     res.status(200).send({
       success: true,
-      data: bookedSlots, // ["10:00", "10:30"]
+      data: bookedSlots,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       success: false,
       message: "Failed to fetch booked slots",
@@ -303,13 +405,115 @@ const getBookedSlotsController = async (req, res) => {
   }
 };
 
+const getBookedSlotsController1 = async (req, res) => {
+  try {
+    const { doctorId, date } = req.query;
+    console.log(doctorId, date);
+
+    if (!doctorId || !date) {
+      return res.status(400).send({
+        success: false,
+        message: "doctorId and date are required",
+      });
+    }
+
+    const appointments = await appointmentModel.find({
+      doctorId,
+      date,
+      status: { $ne: "rejected" },
+    });
+
+    const bookedSlots = appointments.map((appt) => {
+      const [h, m] = appt.time.split(":");
+      return `${h.padStart(2, "0")}:${m.padStart(2, "0")}`;
+    });
+
+    console.log(bookedSlots);
+
+    return res.status(200).send({
+      success: true,
+      data: bookedSlots,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({
+      success: false,
+      message: "Failed to fetch booked slots",
+    });
+  }
+};
+
+const SLOT_DURATION = 30;
+
+const getDoctorAvailabilityByDateController = async (req, res) => {
+  try {
+    const { doctorId, date } = req.query;
+    console.log(doctorId, date);
+
+    if (!doctorId || !date) {
+      return res.status(400).send({
+        success: false,
+        message: "doctorId and date are required",
+      });
+    }
+
+    const doctor = await doctorModel.findById(doctorId);
+
+    if (!doctor || !doctor.availability) {
+      return res.status(404).send({
+        success: false,
+        message: "Doctor availability not found",
+      });
+    }
+
+    const { from, to } = doctor.availability;
+
+    const [fromH, fromM] = from.split(":").map(Number);
+    const [toH, toM] = to.split(":").map(Number);
+
+    const totalMinutes = toH * 60 + toM - (fromH * 60 + fromM);
+
+    const totalSlots = Math.floor(totalMinutes / SLOT_DURATION);
+
+    const appointments = await appointmentModel.find({
+      doctorId,
+      date,
+      status: { $ne: "cancelled" },
+    });
+
+    const bookedSlots = appointments.map((a) => a.time);
+
+    const isFullyBooked = bookedSlots.length >= totalSlots;
+
+    res.status(200).send({
+      success: true,
+      data: {
+        date,
+        doctorId,
+        totalSlots,
+        bookedSlots,
+        bookedCount: bookedSlots.length,
+        isFullyBooked,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error checking doctor availability",
+      error,
+    });
+  }
+};
+
 module.exports = {
+  getDoctorAvailabilityByDateController,
   bookAppointmentController,
   getPatientAppointmentsController,
   getDoctorAppointmentsController,
-  updateAppointmentStatusController,
   updateAppointmentController,
   deleteAppointmentController,
   updateAppointmentStatusController1,
   getBookedSlotsController,
+  getBookedSlotsController1,
 };

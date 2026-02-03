@@ -2,9 +2,6 @@ const userModel = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
- 
-
-//register call back
 const registerController = async (req, res) => {
   try {
     console.log(req.body);
@@ -24,7 +21,7 @@ const registerController = async (req, res) => {
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    // req.body.password = hashedPassword;
+
     const newUser = new userModel({
       name: req.body.name,
       email: req.body.email,
@@ -47,17 +44,32 @@ const registerController = async (req, res) => {
 const loginController = async (req, res) => {
   try {
     const user = await userModel.findOne({ email: req.body.email });
+    // console.log("new user ", req.body.role);
+    // console.log("db data user ", user.role);
+    if (req.body.role !== user.role) {
+      return res
+        .status(403)
+        .send({ message: "Access denied : role mismatch", success: false });
+    }
     if (!user) {
-      return res.status(200).send({ message: "user not found.", success: false });
+      return res
+        .status(200)
+        .send({ message: "user not found.", success: false });
     }
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
-      return res.status(200).send({ message: "Invalid Email or Password ", success: false });
+      return res
+        .status(200)
+        .send({ message: "Invalid Email or Password ", success: false });
     }
-    const token = jwt.sign({ id: user._id , role : user.role }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
-     
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
+
     if (user.role === "admin") {
       return res.status(200).send({
         success: true,
@@ -104,4 +116,66 @@ const loginController = async (req, res) => {
   }
 };
 
-module.exports = { loginController, registerController };
+const getUserProfileController = async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.status(200).send({
+      success: true,
+      message: "User profile fetched successfully",
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in fetching user profile",
+    });
+  }
+};
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    const user = await userModel.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.name = name;
+    user.email = email;
+    await user.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Profile updated successfully",
+      data: {
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error updating profile",
+    });
+  }
+};
+
+module.exports = {
+  loginController,
+  getUserProfileController,
+  registerController,
+  updateUserProfile,
+};

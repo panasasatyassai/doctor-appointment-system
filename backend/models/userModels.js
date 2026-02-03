@@ -20,6 +20,7 @@ const userShema = new mongoose.Schema({
     enum: ["patient", "doctor", "admin"],
     default: "patient",
   },
+  
 });
 
 const userModels = mongoose.model("users", userShema);

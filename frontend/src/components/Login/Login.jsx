@@ -48,26 +48,48 @@ const Login = () => {
     <>
       <Navbar />
 
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-600 to-indigo-700 text-white px-10">
-          <h1 className="text-4xl font-bold mb-4">Doctor Appointment System</h1>
-          <p className="text-lg text-blue-100 text-center max-w-md">
-            Securely manage appointments, doctors, and patients from one
-            powerful dashboard.
+      <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+        
+        <div className="hidden lg:flex flex-col justify-center px-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white">
+          <h1 className="text-4xl font-bold leading-tight mb-6">
+            Welcome Back to <br />
+            <span className="text-yellow-300">Doccure</span>
+          </h1>
+
+          <p className="text-lg text-blue-100 max-w-md mb-10">
+            Manage appointments, doctors, and patients securely with a modern
+            healthcare platform built for speed and reliability.
           </p>
+
+          <div className="flex gap-8 text-sm">
+            <div>
+              <p className="text-2xl font-bold">10K+</p>
+              <p className="text-blue-200">Appointments</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">500+</p>
+              <p className="text-blue-200">Doctors</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold">99%</p>
+              <p className="text-blue-200">Satisfaction</p>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center justify-center bg-slate-50 px-6">
-          <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-1">Sign In</h2>
-            <p className="text-sm text-slate-500 mb-6">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">
+              Sign in to your account
+            </h2>
+            <p className="text-sm text-slate-500 mb-8">
               Enter your credentials to continue
             </p>
 
-            <form onSubmit={onSubmitDetails} className="space-y-4">
+            <form onSubmit={onSubmitDetails} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
-                  Email
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -75,10 +97,11 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="email@example.com"
-                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
+              
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
                   Password
@@ -89,22 +112,23 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
+               
               <div>
                 <label className="block text-sm font-medium text-slate-600 mb-1">
-                  Role
+                  Login As
                 </label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   required
-                  className="w-full h-11 mt-1 px-4 rounded-md border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-11 px-4 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="" disabled>
-                    Select role
+                    Select your role
                   </option>
                   <option value="admin">Admin</option>
                   <option value="doctor">Doctor</option>
@@ -112,21 +136,23 @@ const Login = () => {
                 </select>
               </div>
 
+               
               <button
                 type="submit"
-                className="w-full h-11 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition"
+                className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md"
               >
                 Login
               </button>
             </form>
 
-            <p className="text-center text-sm text-slate-600 mt-6">
+             
+            <p className="text-center text-sm text-slate-600 mt-8">
               Don’t have an account?{" "}
               <Link
                 to="/register"
                 className="text-blue-600 font-semibold hover:underline"
               >
-                Register
+                Create account
               </Link>
             </p>
           </div>

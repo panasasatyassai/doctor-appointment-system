@@ -16,7 +16,6 @@ module.exports = async (req, res, next) => {
 
     const decoded = JWT.verify(token, process.env.JWT_SECRET);
 
-    // fetch user from DB
     const user = await userModel.findById(decoded.id).select("-password");
 
     if (!user) {
@@ -26,7 +25,6 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    // ✅ CORRECT: attach user here
     req.user = user;
 
     next();

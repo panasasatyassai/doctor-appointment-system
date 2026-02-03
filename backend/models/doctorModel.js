@@ -19,33 +19,43 @@ const doctorSchema = new mongoose.Schema(
     },
 
     experience: {
-      type: Number,  
+      type: Number,
       required: true,
     },
 
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
-      default: "pending",  
+      default: "pending",
     },
 
     availability: {
       days: {
-        type: [String],  
+        type: [String],
         default: ["Mon", "Tue", "Wed", "Thu", "Fri"],
       },
       from: {
-        type: String,  
+        type: String,
         default: "09:00",
       },
       to: {
-        type: String,  
+        type: String,
         default: "17:00",
+      },
+      breaks: [
+        {
+          from: String,
+          to: String,
+        },
+      ],
+      totalSlots: {
+        type: Number,
+        default: 0,
       },
     },
   },
 
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("doctors", doctorSchema);

@@ -25,6 +25,8 @@ const DoctorsPage = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [refreshAppointments, setRefreshAppointments] = useState(0);
+
   const handleDoctorSelect = (doctor) => {
     setIsModalOpen(true);
     setSelectedDoctor(doctor);
@@ -37,17 +39,17 @@ const DoctorsPage = () => {
 
   return (
     <>
-      <LogHomeNavbar />
+      <LogHomeNavbar refreshAppointments={refreshAppointments} />
 
       <div className="bg-slate-50 min-h-screen">
-        <div className="max-w-7xl mx-auto px-6 py-10">
-          <div className="mb-8">
+        <div className=" ">
+          {/* <div className="mb-8">
             <h2 className="text-3xl font-bold text-slate-800">Our Doctors</h2>
             <p className="text-slate-600 mt-2">
               Choose from our experienced and verified doctors to book your
               appointment.
             </p>
-          </div>
+          </div> */}
 
           <DoctorsList onDoctorSelect={handleDoctorSelect} />
         </div>
@@ -60,7 +62,11 @@ const DoctorsPage = () => {
         >
           <div className="relative bg-white rounded-xl shadow-lg p-6 h-full overflow-y-auto">
             {selectedDoctor && (
-              <BookAppointment doctor={selectedDoctor} onClose={closeModel} />
+              <BookAppointment
+                doctor={selectedDoctor}
+                onClose={closeModel}
+                onBooked={() => setRefreshAppointments((prev) => prev + 1)}
+              />
             )}
           </div>
         </Modal>

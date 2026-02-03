@@ -19,13 +19,16 @@ connectDB();
 
 require("./utils/appointmentReminder");
 require("./utils/sendEmail");
- 
+console.log(process.env.MANGODB_URL);
 
-app.use("/api/v2/user" , require("./routes/userRoutes"))
+app.use("/api/v2/user", require("./routes/userRoutes"));
 app.use("/api/v2/doctor", require("./routes/doctorRoutes"));
 app.use("/api/v2/appointment", require("./routes/appointmentRoutes"));
 app.use("/api/v2/admin", require("./routes/adminRoutes"));
+//app.use("/api/v2/doctor-profile", require("./routes/doctorProfile"));
 //app.use("/api/v2/appointment", require("./routes/appointmentRoutes"));
+app.use("/api/v3/doctor", require("./routes/doctorProfileRoutes"));
+app.use("/api/v2/doctor-details", require("./routes/userProfileRoutes"));
 
 
 

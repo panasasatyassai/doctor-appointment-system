@@ -11,8 +11,10 @@ import PublicRoute from "./components/publicRoute/publicRoute";
 import NotFound from "./components/NotFound/NotFound";
 import RoleProtectedRoute from "./components/RoleProtectedRoute/RoleProtectedRoute"; 
 import Notifications from "./components/Notifications/Notifications";
-
-
+import AllBookedAppointments from "./components/AllBookedAppointments/AllBookedAppointments";
+import DoctorDetailPage from "./components/DoctorDetailPage/DoctorDetailPage";
+import AddDoctorPage from "./components/AddDoctorPage/AddDoctorPage";
+import ReactPractice from "./components/ReactPractice";
 const App = () => {
   return (
     <BrowserRouter>
@@ -25,6 +27,10 @@ const App = () => {
 
         <Route element={<RoleProtectedRoute allowedRoles={["patient"]} />}>
           <Route path="/log-home" element={<LogHomePage />} />
+          <Route
+            path="/doctors/doctor-details-page/:id"
+            element={<DoctorDetailPage />}
+          />
 
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/booked-appointments" element={<Notifications />} />
@@ -32,6 +38,11 @@ const App = () => {
 
         <Route element={<RoleProtectedRoute allowedRoles={["admin"]} />}>
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/add-doctor-page" element={<AddDoctorPage />} />
+          <Route
+            path="/admin-dashboard/view-appointments"
+            element={<AllBookedAppointments />}
+          />
         </Route>
         <Route element={<RoleProtectedRoute allowedRoles={["doctor"]} />}>
           <Route path="/doctor-dashboard" element={<DoctorDashboard />} />

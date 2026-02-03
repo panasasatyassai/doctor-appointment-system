@@ -3,18 +3,23 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { ThreeDots } from "react-loader-spinner";
-import { Link } from "react-router-dom";
+import { FiArrowUp } from "react-icons/fi";
 
 const SLOT_DURATION = 30;
 
 const Notifications = () => {
   const [appoinments, setAppoinements] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [activeTab, setActiveTab] = useState("today");
 
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [editDate, setEditDate] = useState("");
   const [editTime, setEditTime] = useState("");
+
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0];
 
   const generateSlots = () => {
     const slots = [];
@@ -32,19 +37,39 @@ const Notifications = () => {
 
   const timeSlots = generateSlots();
 
-  const handleDelete = async (id) => {
+  const fetchAppointments = async () => {
+    setShowLoader(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
-        `http://localhost:5000/api/v2/appointment/delete/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await axios.get(
+        "http://localhost:5000/api/v2/appointment/patient-appointments",
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-      message.success("Appointment deleted");
-      setAppoinements((prev) => prev.filter((a) => a.id !== id));
-    } catch {
-      message.error("Delete failed");
+
+      setAppoinements(
+        res.data.data.map((e) => ({
+          id: e._id,
+          doctorName: e.doctorId.name,
+          date: e.date,
+          time: e.time,
+          status: e.status,
+        })),
+      );
+    } finally {
+      setShowLoader(false);
     }
   };
+
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const filteredAppointments = appoinments.filter((a) => {
+    if (activeTab === "today") return a.date === today;
+    if (activeTab === "upcoming") return a.date > today;
+    if (activeTab === "past") return a.date < today;
+    return true;
+  });
 
   const openUpdateModal = (item) => {
     setSelectedAppointment(item);
@@ -53,6 +78,14 @@ const Notifications = () => {
     setShowModal(true);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -60,84 +93,61 @@ const Notifications = () => {
       await axios.put(
         `http://localhost:5000/api/v2/appointment/update/${selectedAppointment.id}`,
         { date: editDate, time: editTime },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       message.success("Appointment updated");
 
-      setAppoinements((prev) =>
-        prev.map((a) =>
-          a.id === selectedAppointment.id
-            ? { ...a, date: editDate, time: editTime }
-            : a
-        )
-      );
-
+      fetchAppointments();
       setShowModal(false);
     } catch {
       message.error("Update failed");
     }
   };
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      setShowLoader(true);
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          "http://localhost:5000/api/v2/appointment/patient-appointments",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/v2/appointment/delete/${id}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      message.success("Appointment deleted");
+      fetchAppointments();
+    } catch {
+      message.error("Delete failed");
+    }
+  };
 
-        console.log(res.data);
+  const RenderAllBookedAppointments = () => (
+    <div className="bg-white rounded-xl shadow border overflow-hidden">
+      <table className="w-full text-sm">
+        <thead className="bg-gray-200 text-gray-700 uppercase text-xs">
+          <tr>
+            <th className="px-4 py-3 text-center">#</th>
+            <th className="px-4 py-3 text-left">Doctor</th>
+            <th className="px-4 py-3 text-center">Date</th>
+            <th className="px-4 py-3 text-center">Time</th>
+            <th className="px-4 py-3 text-center">Update</th>
+            <th className="px-4 py-3 text-center">Delete</th>
+            <th className="px-4 py-3 text-center">Status</th>
+          </tr>
+        </thead>
 
-        setAppoinements(
-          res.data.data.map((e) => ({
-            id: e._id,
-            doctorName: e.doctorId.name,
-            date: e.date,
-            time: e.time,
-            status: e.status,
-          }))
-        );
-        console.log(appoinments);
-      } finally {
-        setShowLoader(false);
-      }
-    };
+        <tbody>
+          {filteredAppointments.map((item, index) => {
+            const appointmentDateTime = new Date(`${item.date}T${item.time}`);
+            const now = new Date();
 
-    fetchAppointments();
-  }, []);
+            const isPastDate = item.date < today;
+            const isPastTime =
+              item.date === today && appointmentDateTime <= now;
 
-  const today = new Date().toISOString().split("T")[0];
+            const isUpdateDisabled = isPastDate || isPastTime;
 
-  const RenderAllBookedAppointments = () => {
-    return (
-      <div className="bg-white rounded-lg shadow border overflow-hidden">
-        <table className="w-full text-sm border-collapse">
-          <thead className="bg-gray-200 text-gray-700 uppercase text-xs">
-            <tr>
-              <th className="px-4 py-3 text-center">#</th>
-              <th className="px-4 py-3 text-left">Doctor</th>
-              <th className="px-4 py-3 text-center">Date</th>
-              <th className="px-4 py-3 text-center">Time</th>
-              <th className="px-4 py-3 text-center">Update</th>
-              <th className="px-4 py-3 text-center">Delete</th>
-              <th className="px-4 py-3 text-center">status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {appoinments.map((item, index) => (
-              <tr
-                key={item.id}
-                className={`border-b ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                } hover:bg-blue-50`}
-              >
-                <td className="px-4 py-3 text-center font-medium">
-                  {index + 1}
-                </td>
+            return (
+              <tr key={item.id} className="border-b hover:bg-blue-50">
+                <td className="px-4 py-3 text-center">{index + 1}</td>
 
                 <td className="px-4 py-3 font-medium text-blue-700">
                   {item.doctorName}
@@ -146,34 +156,27 @@ const Notifications = () => {
                 <td className="px-4 py-3 text-center">{item.date}</td>
 
                 <td className="px-4 py-3 text-center">
-                  <span className="inline-block px-3 py-1 rounded-full bg-green-600 text-white text-xs font-semibold">
+                  <span className="px-3 py-1 rounded-full bg-green-600 text-white text-xs font-semibold">
                     {item.time}
                   </span>
                 </td>
 
-                {/* <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => openUpdateModal(item)}
-                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold"
-                  >
-                    Update
-                  </button>
-                </td> */}
                 <td className="px-4 py-3 text-center">
                   <button
+                    disabled={isUpdateDisabled}
                     onClick={() => openUpdateModal(item)}
-                    disabled={item.status === "cancelled"}
                     className={`px-3 py-1.5 rounded text-xs font-semibold
-      ${
-        item.status === "cancelled"
-          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-          : "bg-green-600 hover:bg-green-700 text-white"
-      }`}
+                      ${
+                        isUpdateDisabled
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-green-600 hover:bg-green-700 text-white"
+                      }`}
                   >
                     Update
                   </button>
                 </td>
 
+                 
                 <td className="px-4 py-3 text-center">
                   <button
                     onClick={() => handleDelete(item.id)}
@@ -182,77 +185,28 @@ const Notifications = () => {
                     Delete
                   </button>
                 </td>
+
                 <td className="px-4 py-3 text-center">
-                  {item.status === "approved" && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                      Approved
-                    </span>
-                  )}
-
-                  {item.status === "cancelled" && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                      Cancelled
-                    </span>
-                  )}
-
-                  {item.status === "pending" && (
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                      Pending
-                    </span>
-                  )}
+                  <span
+                    className={`inline-flex items-center px-3 h-7 rounded-full text-xs font-semibold
+                      ${
+                        item.status === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : item.status === "pending"
+                            ? "bg-yellow-100 text-yellow-700"
+                            : "bg-red-100 text-red-700"
+                      }`}
+                  >
+                    {item.status}
+                  </span>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
-  const RenderNoBookedAppointments = () => {
-    return (
-      <div className="flex items-center justify-center h-[420px]">
-        <div className="bg-white rounded-xl shadow-md px-10 py-12 text-center max-w-md">
-          <div className="flex justify-center items-center">
-            <img
-              src="https://media.istockphoto.com/id/1278801008/vector/calendar-and-check-mark-vector-icon.jpg?s=612x612&w=0&k=20&c=mb3TThoC0BJiFFB3JcwMPkTZULhSn5osrHK3o3gDUxg="
-              className="h-[100px]"
-            />
-          </div>
-
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">
-            No Booked Appointments
-          </h3>
-
-          <p className="text-gray-500 text-sm mb-6">
-            You haven’t booked any appointments yet. Once you book, they’ll
-            appear here.
-          </p>
-
-          <div className="inline-flex items-center gap-2 text-blue-600 font-medium text-sm">
-            Go to{" "}
-            <Link to="/doctors">
-              {" "}
-              <span className="underline">Doctors</span>{" "}
-            </Link>{" "}
-            to book
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const RenderRes = () => {
-    return (
-      <>
-        {appoinments.length === 0 ? (
-          <RenderNoBookedAppointments />
-        ) : (
-          <RenderAllBookedAppointments />
-        )}
-      </>
-    );
-  };
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <>
@@ -260,16 +214,35 @@ const Notifications = () => {
 
       <div className="bg-gray-100 min-h-screen px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            All Booked Appointments
-          </h2>
+          <h2 className="text-2xl font-bold mb-6">All Booked Appointments</h2>
+
+          <div className="flex gap-3 mb-6">
+            {["today", "upcoming", "past"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-md text-sm font-medium
+                  ${
+                    activeTab === tab
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+              >
+                {tab.toUpperCase()}
+              </button>
+            ))}
+          </div>
 
           {showLoader ? (
             <div className="flex justify-center py-20">
               <ThreeDots color="#2563eb" />
             </div>
+          ) : filteredAppointments.length === 0 ? (
+            <p className="text-center text-gray-500 py-20">
+              No appointments found
+            </p>
           ) : (
-            <RenderRes />
+            <RenderAllBookedAppointments />
           )}
         </div>
       </div>
@@ -328,6 +301,17 @@ const Notifications = () => {
           </div>
         </div>
       )}
+
+      <div>
+        {showScrollTop && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 left-6 z-50 bg-[#7367f0] hover:bg-[#5e50ee] text-white p-3 rounded-full shadow-lg transition"
+          >
+            <FiArrowUp size={20} />
+          </button>
+        )}
+      </div>
     </>
   );
 };

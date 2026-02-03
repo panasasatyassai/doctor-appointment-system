@@ -55,20 +55,20 @@ const Notifications = () => {
     };
     getAppoinements();
   }, []);
-  const data = [
-    {
-      id: 1,
-      content: "You booked an appointment with Dr. Amin Khan for",
-      date: "2025-12-21",
-      time: "06:48:09",
-    },
-    {
-      id: 2,
-      content: "You booked an appointment with Dr. Amin Khan for",
-      date: "2025-12-21",
-      time: "06:48:09",
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: 1,
+  //     content: "You booked an appointment with Dr. Amin Khan for",
+  //     date: "2025-12-21",
+  //     time: "06:48:09",
+  //   },
+  //   {
+  //     id: 2,
+  //     content: "You booked an appointment with Dr. Amin Khan for",
+  //     date: "2025-12-21",
+  //     time: "06:48:09",
+  //   },
+  // ];
 
   const RenderNoNotifications = () => {
     return (
@@ -82,7 +82,6 @@ const Notifications = () => {
     return (
       <div className="overflow-x-auto">
         <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-          {/* Header */}
           <thead className="bg-blue-100">
             <tr>
               <th className="border border-gray-300 px-4 py-3 text-center font-semibold">
@@ -98,7 +97,7 @@ const Notifications = () => {
                 Time
               </th>
               <th className="border border-gray-300 px-4 py-3 text-center font-semibold">
-                Update1
+                Update
               </th>
               <th className="border border-gray-300 px-4 py-3 text-center font-semibold">
                 Delete

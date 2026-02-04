@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { message } from "antd";
 import { useState } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/login",
+        `{API}/api/v2/user/login`,
         newUser
       );
 

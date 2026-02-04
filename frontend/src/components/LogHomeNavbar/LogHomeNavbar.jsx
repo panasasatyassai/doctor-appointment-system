@@ -22,7 +22,7 @@ const LogHomeNavbar = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:5000/api/v2/user/profile3",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/profile3",
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -49,7 +49,7 @@ const LogHomeNavbar = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:5000/api/v2/appointment/patient-appointments",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/patient-appointments",
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -96,7 +96,7 @@ const LogHomeNavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        "http://localhost:5000/api/v2/user/update-profile3",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/update-profile3",
         {
           name: editName,
           email: editEmail,

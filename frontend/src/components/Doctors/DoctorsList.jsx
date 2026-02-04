@@ -19,7 +19,7 @@ const DoctorsList = ({ onDoctorSelect }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:5000/api/v2/appointment/patient-appointments",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/patient-appointments",
         { headers: { Authorization: `Bearer ${token}` } },
       );
       console.log("DATA", res.data);
@@ -36,7 +36,7 @@ const DoctorsList = ({ onDoctorSelect }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:5000/api/v2/appointment/doctor-availability",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/doctor-availability",
         {
           params: { doctorId, date: today },
           headers: { Authorization: `Bearer ${token}` },
@@ -54,7 +54,7 @@ const DoctorsList = ({ onDoctorSelect }) => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:5000/api/v2/doctor/get-all-doctors2",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/get-all-doctors2",
         { headers: { Authorization: `Bearer ${token}` } },
       );
 

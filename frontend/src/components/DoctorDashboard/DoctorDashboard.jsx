@@ -40,7 +40,7 @@ const DoctorDashboard = () => {
   };
 
   const fetchProfile = async () => {
-    const res = await axios.get("http://localhost:5000/api/v2/doctor/profile", {
+    const res = await axios.get("https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/profile", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -57,7 +57,7 @@ const DoctorDashboard = () => {
     try {
       //  setLoading(true);
       const res = await axios.get(
-        "http://localhost:5000/api/v2/doctor/appointments",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/appointments",
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -80,7 +80,7 @@ const DoctorDashboard = () => {
   const updateStatus = async (id, status) => {
     setStatusLoader({ id, action: status });
     const res = await axios.post(
-      "http://localhost:5000/api/v2/appointment/update-status",
+      "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/update-status",
       { appointmentId: id, status },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -115,7 +115,7 @@ const DoctorDashboard = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/v2/doctor/update-availability",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/update-availability",
         { days, from, to, breaks },
         { headers: { Authorization: `Bearer ${token}` } },
       );

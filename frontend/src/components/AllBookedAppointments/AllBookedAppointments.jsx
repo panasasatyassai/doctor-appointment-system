@@ -14,7 +14,7 @@ const AllBookedAppointments = () => {
 
   const fetchPatients = async () => {
     setShowLoader(true);
-    const url = " https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/get-all-appointments";
+    const url = "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/get-all-appointments";
     const token = localStorage.getItem("token");
     try {
       const res = await axios.get(url, {

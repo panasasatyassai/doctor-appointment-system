@@ -98,14 +98,14 @@ const AdminDashboard = () => {
   const fetchDoctors = async () => {
     setShowLoader(true);
     const res = await axios.get(
-      ` https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/get-all-doctors`,
+      `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/get-all-doctors`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
 
     const updated = await Promise.all(
       res.data.data.map(async (doc) => {
         const slotRes = await axios.get(
-          ` https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/doctor-booked-slots/${doc._id}`,
+          `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/doctor-booked-slots/${doc._id}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
       console.log(newDoctor);
 
       const token = localStorage.getItem("token");
-      const url = ` https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/apply-doctor`;
+      const url = `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/apply-doctor`;
       try {
         const res = await axios.post(url, newDoctor, {
           headers: {
@@ -181,7 +181,7 @@ const AdminDashboard = () => {
 
   const onSaveDoctor = async () => {
     await axios.post(
-      ` https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/update-doctor`,
+      `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/admin/update-doctor`,
       {
         doctorId: selectedDoctor._id,
         name: editName,

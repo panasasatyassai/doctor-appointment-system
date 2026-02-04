@@ -30,7 +30,7 @@ const Notifications = () => {
       setShowLoader(true);
       try {
         const url =
-          "http://localhost:5000/api/v2/appointment/patient-appointments";
+          "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/patient-appointments";
         const token = localStorage.getItem("token");
         const res = await axios.get(url, {
           headers: {

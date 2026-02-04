@@ -13,6 +13,7 @@ import {
   FiX,FiSearch
 } from "react-icons/fi";
 import { FiPlusCircle } from "react-icons/fi";
+const API = import.meta.env.VITE_API_URL;
 
 import { MdOutlineSearchOff } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
@@ -97,14 +98,14 @@ const AdminDashboard = () => {
   const fetchDoctors = async () => {
     setShowLoader(true);
     const res = await axios.get(
-      "http://localhost:5000/api/v2/doctor/get-all-doctors",
+      `{API}/api/v2/doctor/get-all-doctors`,
       { headers: { Authorization: `Bearer ${token}` } },
     );
 
     const updated = await Promise.all(
       res.data.data.map(async (doc) => {
         const slotRes = await axios.get(
-          `http://localhost:5000/api/v2/admin/doctor-booked-slots/${doc._id}`,
+          `{API}/api/v2/admin/doctor-booked-slots/${doc._id}`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
 
@@ -138,7 +139,7 @@ const AdminDashboard = () => {
       console.log(newDoctor);
 
       const token = localStorage.getItem("token");
-      const url = "http://localhost:5000/api/v2/doctor/apply-doctor";
+      const url = `{API}/api/v2/doctor/apply-doctor`;
       try {
         const res = await axios.post(url, newDoctor, {
           headers: {
@@ -180,7 +181,7 @@ const AdminDashboard = () => {
 
   const onSaveDoctor = async () => {
     await axios.post(
-      "http://localhost:5000/api/v2/admin/update-doctor",
+      `{API}/api/v2/admin/update-doctor`,
       {
         doctorId: selectedDoctor._id,
         name: editName,

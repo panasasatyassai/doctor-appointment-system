@@ -28,7 +28,7 @@ const AdminandDoctornavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        " https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/get-doctor-profile",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/get-doctor-profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ const AdminandDoctornavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        " https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/update-doctor-profile",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/update-doctor-profile",
         {
           name: editName,
           email: editEmail,

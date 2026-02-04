@@ -79,7 +79,7 @@ const BookAppointment = ({ doctor, onClose }) => {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      " https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/booked-slots",
+      "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/booked-slots",
       {
         params: { doctorId: doctor.id, date },
         headers: { Authorization: `Bearer ${token}` },
@@ -110,7 +110,7 @@ const BookAppointment = ({ doctor, onClose }) => {
 
     try {
       const res = await axios.post(
-        " https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/book-appointment",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/book-appointment",
         { doctor, date, time, problem, name },
         { headers: { Authorization: `Bearer ${token}` } },
       );

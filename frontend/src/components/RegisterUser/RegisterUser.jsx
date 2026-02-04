@@ -23,7 +23,7 @@ const RegisterUser = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v2/user/register",
+        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/register",
         newUser,
       );
 

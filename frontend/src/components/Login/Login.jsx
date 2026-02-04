@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(
-        `{API}/api/v2/user/login`,
+        ` https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/login`,
         newUser
       );
 

@@ -67,7 +67,6 @@ const LogHomeNavbar = () => {
 
   useEffect(() => {
     fetchAppointments();
-    
   }, [location.pathname]);
 
   useEffect(() => {

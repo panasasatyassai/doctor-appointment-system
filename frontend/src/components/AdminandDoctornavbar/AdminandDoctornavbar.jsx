@@ -105,9 +105,9 @@ const AdminandDoctornavbar = () => {
     <header className="sticky top-0 z-50 bg-white border-b">
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
         <img
-          src="https://doccure-wp.dreamstechnologies.com/wp-content/uploads/2024/06/logo-01.svg"
+          src="https://static.vecteezy.com/system/resources/previews/024/311/474/non_2x/doctor-appointment-icon-rounded-button-style-editable-eps-symbol-illustration-vector.jpg"
           alt="Doccure"
-          className="h-9"
+          className="h-16"
         />
 
         <div className="relative" ref={menuRef}>

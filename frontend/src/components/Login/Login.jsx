@@ -16,10 +16,7 @@ const Login = () => {
     const newUser = { email, password, role };
 
     try {
-      const res = await axios.post(
-        `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/login`,
-        newUser
-      );
+      const res = await axios.post(`${API}/api/v2/user/login`, newUser);
 
       const userProfile = res.data.user;
       localStorage.setItem("user", JSON.stringify(userProfile));

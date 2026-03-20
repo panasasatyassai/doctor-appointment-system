@@ -4,6 +4,7 @@ import axios from "axios";
 import { ThreeDots } from "react-loader-spinner";
 import { message } from "antd";
 import { FiCalendar, FiClock, FiLoader, FiAlertCircle } from "react-icons/fi";
+const API = import.meta.env.VITE_API_URL;
 
 const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SLOT_DURATION_MINUTES = 30;
@@ -40,7 +41,7 @@ const DoctorDashboard = () => {
   };
 
   const fetchProfile = async () => {
-    const res = await axios.get("https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/profile", {
+    const res = await axios.get(`${API}/api/v2/doctor/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -56,10 +57,9 @@ const DoctorDashboard = () => {
   const fetchAppointments = async () => {
     try {
       //  setLoading(true);
-      const res = await axios.get(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/appointments",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await axios.get(`${API}/api/v2/doctor/appointments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setAppointments(
         res.data.data.map((a) => ({
@@ -80,7 +80,7 @@ const DoctorDashboard = () => {
   const updateStatus = async (id, status) => {
     setStatusLoader({ id, action: status });
     const res = await axios.post(
-      "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/update-status",
+      `${API}/api/v2/appointment/update-status`,
       { appointmentId: id, status },
       { headers: { Authorization: `Bearer ${token}` } },
     );
@@ -115,7 +115,7 @@ const DoctorDashboard = () => {
 
     try {
       await axios.post(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor/update-availability",
+        `${API}/api/v2/doctor/update-availability`,
         { days, from, to, breaks },
         { headers: { Authorization: `Bearer ${token}` } },
       );

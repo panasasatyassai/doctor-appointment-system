@@ -4,6 +4,7 @@ import axios from "axios";
 import { message } from "antd";
 import { ThreeDots } from "react-loader-spinner";
 import { FiArrowUp } from "react-icons/fi";
+const API = import.meta.env.VITE_API_URL;
 
 const SLOT_DURATION = 30;
 
@@ -42,7 +43,7 @@ const Notifications = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/patient-appointments",
+        `${API}/api/v2/appointment/patient-appointments`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -91,7 +92,7 @@ const Notifications = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/update/${selectedAppointment.id}`,
+        `${API}/api/v2/appointment/update/${selectedAppointment.id}`,
         { date: editDate, time: editTime },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -108,10 +109,9 @@ const Notifications = () => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
-        `https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/delete/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await axios.delete(`${API}/api/v2/appointment/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       message.success("Appointment deleted");
       fetchAppointments();
     } catch {

@@ -3,6 +3,7 @@ import { message } from "antd";
 import { useState } from "react";
 import axios from "axios";
 import Navbar from "../Navbar/Navbar";
+const API = import.meta.env.VITE_API_URL;
 
 const RegisterUser = () => {
   const [name, setName] = useState("");
@@ -22,10 +23,7 @@ const RegisterUser = () => {
     const newUser = { name, email, password, role };
 
     try {
-      const response = await axios.post(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/register",
-        newUser,
-      );
+      const response = await axios.post(`${API}/api/v2/user/register`, newUser);
 
       if (response.data.success) {
         message.success("Register Successful");

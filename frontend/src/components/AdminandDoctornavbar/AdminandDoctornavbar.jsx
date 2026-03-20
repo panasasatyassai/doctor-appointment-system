@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { message } from "antd";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const AdminandDoctornavbar = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const AdminandDoctornavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/get-doctor-profile",
+        `${API}/api/v2/doctor-details/get-doctor-profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +57,7 @@ const AdminandDoctornavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/doctor-details/update-doctor-profile",
+        `${API}/api/v2/doctor-details/update-doctor-profile`,
         {
           name: editName,
           email: editEmail,

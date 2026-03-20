@@ -9,7 +9,7 @@ import {
   FiBookOpen,
   FiGlobe,
 } from "react-icons/fi";
-
+const API = import.meta.env.VITE_API_URL;
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -68,17 +68,9 @@ const DoctorDetailPage = () => {
   const [doctor, setDoctor] = useState(null);
   const [relatedDoctors, setRelatedDoctors] = useState([]);
 
-  // const hasAvailability = isDoctorAvailable(doctor.availability);
-  // const isAvailableNow = isDoctorAvailableNow(doctor.availability);
-  // const nextDay = getNextAvailableDay(doctor.availability?.days || []);
-
-  console.log("id : ", id);
-
   useEffect(() => {
     const fetchDoctor = async () => {
-      const res = await axios.get(
-        `http://localhost:5000/api/v2/doctor/get-doctor/${id}`,
-      );
+      const res = await axios.get(`${API}/api/v2/doctor/get-doctor/${id}`);
       const resData = res.data.data;
       const updatedData = {
         name: resData.name,
@@ -109,7 +101,7 @@ const DoctorDetailPage = () => {
   useEffect(() => {
     if (!doctor) return;
     const fetchRelatedDoctors = async () => {
-      const url = "http://localhost:5000/api/v2/doctor/related-doctors";
+      const url = `${API}/api/v2/doctor/related-doctors`;
       const res = await axios.get(url, {
         params: {
           specialization: doctor.specialization,
@@ -128,14 +120,6 @@ const DoctorDetailPage = () => {
     };
     fetchRelatedDoctors();
   }, [doctor]);
-
-  //  const relatedDoctors = [
-  //   { id: 1, name: "Dr Rajiv Menon", experience: 11, specialization: "Cardiology" },
-  //   { id: 2, name: "Dr Amit Sharma", experience: 9, specialization: "Neurology" },
-  //   { id: 3, name: "Dr Neha Kapoor", experience: 7, specialization: "Dermatology" },
-  // ];
-
-  console.log("doc", doctor);
 
   if (!doctor) return <h1>Loading</h1>;
 
@@ -164,10 +148,7 @@ const DoctorDetailPage = () => {
                   <FiStar className="text-yellow-500" />
                   {doctor.rating} Rating
                 </span>
-                {/* <span className="flex items-center gap-1">
-                  <FiUser className="text-emerald-500" />
-                  {doctor.totalPatients}+ Patients
-                </span> */}
+
                 <span className="flex items-center gap-1">
                   <FiMapPin className="text-rose-500" />
                   {doctor.clinicAddress}
@@ -240,11 +221,6 @@ const DoctorDetailPage = () => {
                 {formatTime12Hour(doctor.availability.from)} –{" "}
                 {formatTime12Hour(doctor.availability.to)}
               </div>
-
-              {/* <div className="flex items-center gap-2">
-                <FiClock className="text-rose-500" />
-                Break: {doctor.availability.breakTime}
-              </div> */}
 
               {doctor.availability?.breakTime?.length > 0 ? (
                 doctor.availability.breakTime.map((b, i) => (

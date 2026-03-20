@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { message } from "antd";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
 const LogHomeNavbar = () => {
   const [appoinments, setAppoinements] = useState([]);
@@ -21,12 +22,9 @@ const LogHomeNavbar = () => {
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/profile3",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await axios.get(`${API}/api/v2/user/profile3`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const arr = res.data.data;
       const updatedData = {
         name: arr.name,
@@ -49,7 +47,7 @@ const LogHomeNavbar = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/appointment/patient-appointments",
+        `${API}/api/v2/appointment/patient-appointments`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -96,7 +94,7 @@ const LogHomeNavbar = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        "https://doctor-appointment-system-1-rlfr.onrender.com/api/v2/user/update-profile3",
+        `${API}/api/v2/user/update-profile3`,
         {
           name: editName,
           email: editEmail,

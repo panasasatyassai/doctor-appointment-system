@@ -5,7 +5,7 @@ A full-stack web application that allows patients to book and manage doctor appo
 ---
 
 ## 🚀 Live Demo
-👉 https://doctor-appointment-system-qhf1-13m6u84jz.vercel.app/
+👉 [https://doctor-appointment-system-qhf1-5xaoqgccl.vercel.app/](https://doctor-appointment-system-qhf1-5xaoqgccl.vercel.app/)
 
 ---
 

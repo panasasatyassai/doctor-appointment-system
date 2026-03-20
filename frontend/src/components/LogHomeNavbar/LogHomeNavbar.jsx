@@ -150,9 +150,9 @@ const LogHomeNavbar = () => {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-10">
           <img
-            src="https://doccure-wp.dreamstechnologies.com/wp-content/uploads/2024/06/logo-01.svg"
+            src="https://static.vecteezy.com/system/resources/previews/024/311/474/non_2x/doctor-appointment-icon-rounded-button-style-editable-eps-symbol-illustration-vector.jpg"
             alt="Doccure"
-            className="h-8"
+            className="h-16"
           />
 
           <nav className="hidden md:flex items-center gap-6">

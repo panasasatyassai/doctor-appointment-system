@@ -5,18 +5,15 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-           
           <div className="flex items-center gap-10">
-            
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="https://doccure-wp.dreamstechnologies.com/wp-content/uploads/2024/06/logo-01.svg"
+                src="https://static.vecteezy.com/system/resources/previews/024/311/474/non_2x/doctor-appointment-icon-rounded-button-style-editable-eps-symbol-illustration-vector.jpg"
                 alt="Doccure"
-                className="h-9"
+                className="h-16"
               />
             </Link>
 
-            
             <nav className="hidden md:flex items-center gap-8">
               <Link
                 to="/"
@@ -41,7 +38,6 @@ const Navbar = () => {
             </nav>
           </div>
 
-           
           <div className="flex items-center gap-3">
             <Link
               to="/login"
